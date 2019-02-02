@@ -66,6 +66,10 @@ function GA() {
                 let gen1 = Math.ceil(rand * chromosome.len - 1);
                 rand = Math.random();
                 let gen2 = Math.ceil(rand * chromosome.len - 1);
+                if (gen1 === gen2) { // mom == dad ?
+                    if (gen1 > 0) gen1--;
+                    else gen1++;
+                }
 
                 // swape two gene from genome
                 let genBuffer = chromosome.genome[gen1];
