@@ -50,7 +50,7 @@ function GA() {
 
     this.crossover = function (momChrom, dadChrom) {
         let rand = Math.random();
-        let cuterGen = Math.ceil(rand * (this.ChromosomeLenght - 1));
+        let cuterGen = Math.ceil(rand * this.ChromosomeLenght - 1);
         let child = new this.Chromosome(this.ChromosomeLenght);
         child.genome = momChrom.genome.slice(cuterGen);
         child.genome.push.apply(child.genome, dadChrom.genome.slice(0, cuterGen));
@@ -63,9 +63,9 @@ function GA() {
         if (rand * 100 <= rate) { // if random number occured within mutation rate
             for (let i = 0; i <= this.MutationGeneCount; i++) {
                 rand = Math.random();
-                let gen1 = Math.ceil(rand * (chromosome.len - 1));
+                let gen1 = Math.ceil(rand * chromosome.len - 1);
                 rand = Math.random();
-                let gen2 = Math.ceil(rand * (chromosome.len - 1));
+                let gen2 = Math.ceil(rand * chromosome.len - 1);
 
                 // swape two gene from genome
                 let genBuffer = chromosome.genome[gen1];
@@ -94,7 +94,8 @@ function GA() {
 
     this.regeneration = function () {
         this.RegenerationCounter++;
-        // console.log("regeneration", this.RegenerationCounter);
+        if (this.RegenerationCounter % 1000 === 0)
+            console.log("generation", this.RegenerationCounter);
         let newPopulation = [];
 
         // create new chromosomes 
@@ -116,7 +117,7 @@ function GA() {
 
     this.getRandomeParent = function () {
         let parentIndex = Math.random();
-        parentIndex = Math.ceil(parentIndex * (this.Popunation.length - 1));
+        parentIndex = Math.ceil(parentIndex * this.Popunation.length - 1);
         if (this.Popunation[parentIndex] == null)
             throw Error();
         return this.Popunation[parentIndex];
@@ -140,17 +141,8 @@ function GA() {
     }
 }
 
-
 console.log("START GA");
-var g = new Promise(function (resolve, reject) {
-    setTimeout(function () {
-        var ga = new GA();
-        var result = ga.Start(8, 100, 50, 20, 1000);
-        console.log("Generation", ga.RegenerationCounter)
-        resolve(result);
-    }, 1);
-});
-
-g.then(d => {
-    console.log("end", d.fitness, d.genome);
-})
+var ga = new GA();
+var result = ga.Start(15, 1000, 50, 20, 1000);
+console.log("Generation", ga.RegenerationCounter)
+console.log("Result", result);
