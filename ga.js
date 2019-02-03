@@ -166,7 +166,7 @@ class GA {
 
     regeneration() {
         this.RegenerationCounter++;
-        if (this.RegenerationCounter % 1000 === 0)
+        if (this.RegenerationCounter % 100 === 0)
             console.log("generation", this.RegenerationCounter, "elite fitness", this.Popunation[0].fitness);
         let newPopulation = [];
 
@@ -207,7 +207,7 @@ class GA {
 // best practice: GA(200, 500, 30, 50, 10000, 75); 4775ms
 // fast practice: GA(200, 500, 10, 50, 10000, 75); 2659ms
 var startTime = new Date().getTime();
-var ga = new GA(300, 500, 30, 50, 10000, 75);
+var ga = new GA(1000, 500, 10, 50, 10000, 75);
 var result = ga.Start();
 var duration = new Date().getTime() - startTime;
 console.log("Result", result);
