@@ -1,15 +1,5 @@
 "use strict";
-
-class Utilize {
-    static getIntegerRandom(min, max) {
-        let prev;
-        return function rand() {
-            const num = Math.floor((Math.random() * (max - min + 1)) + min);
-            prev = (num === prev && min !== max) ? rand() : num;
-            return prev;
-        };
-    };
-}
+var ut = require('./utilities');
 
 class Chromosome {
     constructor(n) {
@@ -38,7 +28,7 @@ class Chromosome {
     randomize() {
         let nums = Array.apply(null, { length: this.len }).map(Number.call, Number); // N:8 => [1,2,3,4,5,6,7,8]
         for (let g = 0; g < this.len; g++) {
-            let rand = Utilize.getIntegerRandom(0, nums.length - 1)();
+            let rand = new ut.Rand(0, nums.length - 1).next();
             this.genome[g] = nums[rand];
             nums.splice(rand, 1); // remove selected number
         }
@@ -74,8 +64,8 @@ class GA {
     pmx(mom, dad, cut1, cut2) {
         mom = mom.slice(0);
         dad = dad.slice(0);
-        var cut1 = cut1 ? cut1 : Utilize.getIntegerRandom(1, mom.length / 2)();   // left side of crossover section
-        var cut2 = cut2 ? cut2 : Utilize.getIntegerRandom(cut1 + 1, mom.length - 2)();   // right side of crossover section
+        var cut1 = cut1 ? cut1 : new ut.Rand(1, mom.length / 2).next();   // left side of crossover section
+        var cut2 = cut2 ? cut2 : new ut.Rand(cut1 + 1, mom.length - 2).next();   // right side of crossover section
         var child = Array(mom.length);
         var genomeDic = {};
         var childEmptyGenes = [];
@@ -124,10 +114,12 @@ class GA {
         //      ^     ^
         //        SWAP
         //
-        if (Utilize.getIntegerRandom(0, 100)() <= rate) { // if random number occured within mutation rate
-            let rand = Utilize.getIntegerRandom(0, chromosome.len - 1);
-            let gen1 = rand();
-            let gen2 = rand();
+        if (new ut.Rand(0, 100).next() <= rate) { // if random number occured within mutation rate
+            let rand = new ut.Rand(0, chromosome.len - 1);
+            let gen1 = rand.next();
+            let gen2 = rand.next();
+            if(gen1 == gen2)
+                throw new Error("Mutation gens are duplicate!");
             // swape two gene from genome
             let genBuffer = chromosome.genome[gen1];
             chromosome.genome[gen1] = chromosome.genome[gen2];
@@ -172,7 +164,7 @@ class GA {
 
         // create new chromosomes 
         for (let index = this.Popunation.length; index < this.PopunationLenght; index++) {
-            let rand = Utilize.getIntegerRandom(0, this.Popunation.length - 1);
+            let rand = new ut.Rand(0, this.Popunation.length - 1);
             let mom = this.getRandomeParent(rand);
             let dad = this.getRandomeParent(rand);
             let child = this.crossover(mom, dad);
@@ -185,7 +177,7 @@ class GA {
     }
 
     getRandomeParent(rand) {
-        let parentIndex = rand();
+        let parentIndex = rand.next();
         let parent = this.Popunation[parentIndex];
         if (parent == null) {
             throw new Error("GA.getRandomeParent has ERROR");
@@ -207,13 +199,12 @@ class GA {
 // best practice: GA(200, 500, 30, 50, 10000, 75); 4775ms
 // fast practice: GA(200, 500, 10, 50, 10000, 75); 2659ms
 // N-Queen O(n^n) | O(n!) == NP-Complex
-let sw = require("./StopWatch");
-sw.StopWatch.start();
+ut.StopWatch.start();
 // ------------------------------------------------------
 //              N , Pop, SR, MR, ReGen, CR
-var ga = new GA(200, 500, 10, 50, 10000, 75);
+var ga = new GA(100, 500, 30, 50, 10000, 75);
 var result = ga.Start();
-console.log("Result", result);
-console.log("Generation", ga.RegenerationCounter)
+console.log("Result:", result);
+console.log("Generation:", ga.RegenerationCounter)
 // ------------------------------------------------------
-sw.StopWatch.stop();
+ut.StopWatch.stop();
