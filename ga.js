@@ -206,10 +206,14 @@ class GA {
 //                    N , Pop, SR, MR, ReGen, CR
 // best practice: GA(200, 500, 30, 50, 10000, 75); 4775ms
 // fast practice: GA(200, 500, 10, 50, 10000, 75); 2659ms
-var startTime = new Date().getTime();
-var ga = new GA(1000, 500, 10, 50, 10000, 75);
+// N-Queen O(n^n) | O(n!) == NP-Complex
+let sw = require("./StopWatch");
+sw.StopWatch.start();
+// ------------------------------------------------------
+//              N , Pop, SR, MR, ReGen, CR
+var ga = new GA(200, 500, 10, 50, 10000, 75);
 var result = ga.Start();
-var duration = new Date().getTime() - startTime;
 console.log("Result", result);
-console.log('duration', duration, "ms");
 console.log("Generation", ga.RegenerationCounter)
+// ------------------------------------------------------
+sw.StopWatch.stop();
