@@ -23,7 +23,7 @@ var ga = new GA(200, 500, 10, 50, 10000, 75);
     ```
 
 >**Note**   
- This project independent from any libraries. So don't need to run `npm install`.
+This project independent from any libraries. So don't need to run `npm install`.
  
 <br/><br/>
 The GA executed and printed an answer like this:
@@ -38,4 +38,12 @@ Generation: 123
 duration: 3073 ms
 ```
 
+>**Result**     
+Is an object that included `len`, `genome`, `fitness` properties. 
+`len` is number of Queens or genome length. 
+`genome` is an array to the N length. In this array every index is Chess board row no. and array value at that index is column no. 
+For example `result[10] = 15` means, row 10 and column 15 which has home of a Queen. 
+And `fitness` is number of Queens which have collision at the Chess board. So zero fitness is the best result for the elite chromosome.
 
+>**Generation**     
+Is generation number which the best chromosome reached the zero fitness.
