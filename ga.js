@@ -41,14 +41,14 @@ class Chromosome {
 class GA {
     constructor(n, popLenght, selectionPercent, mutationRate, maxRegenerationCount, convergenceRate) {
         this.ChromosomeLenght = n || 8;
-        this.PopunationLenght = popLenght || 100;
+        this.PopulationLenght = popLenght || 100;
         this.SelectionPercent = selectionPercent || 50;
         this.MutationProbability = mutationRate || 20;
         this.RegenerationLimit = maxRegenerationCount || Number.MAX_SAFE_INTEGER;
         this.RegenerationCounter = 0;
         this.ConvergenceRate = convergenceRate || 60;
         // this.MutationGeneCount = Math.round(this.MutationProbability * (0.1 * this.ChromosomeLenght) / 100);
-        this.Popunation = Array.apply(null, { length: this.PopunationLenght }).map(c => new Chromosome(this.ChromosomeLenght).randomize());
+        this.Population = Array.apply(null, { length: this.PopulationLenght }).map(c => new Chromosome(this.ChromosomeLenght).randomize());
     }
 
     crossover(mom, dad) {
@@ -64,8 +64,8 @@ class GA {
     pmx(mom, dad, cut1, cut2) {
         mom = mom.slice(0);
         dad = dad.slice(0);
-        var cut1 = cut1 ? cut1 : new Random(1, mom.length / 2).next();   // left side of crossover section
-        var cut2 = cut2 ? cut2 : new Random(cut1 + 1, mom.length - 2).next();   // right side of crossover section
+        cut1 = cut1 ? cut1 : new Random(1, mom.length / 2).next();   // left side of crossover section
+        cut2 = cut2 ? cut2 : new Random(cut1 + 1, mom.length - 2).next();   // right side of crossover section
         var child = Array(mom.length);
         var genomeDic = {};
         var childEmptyGenes = [];
@@ -128,15 +128,15 @@ class GA {
     }
 
     Selection(percent) {
-        let keepCount = percent * this.PopunationLenght / 100;
-        this.Popunation.splice(keepCount); // remove week chromosomes from keepCount index to end of array  
+        let keepCount = percent * this.PopulationLenght / 100;
+        this.Population.splice(keepCount); // remove week chromosomes from keepCount index to end of array  
         this.regeneration(); // start new generation   
     }
 
     // sort population based on fitness: [1,2,3,6,7,90,...]
     evaluation() {
-        this.Popunation.sort((a, b) => a.fitness - b.fitness);
-        let elit = this.Popunation[0];
+        this.Population.sort((a, b) => a.fitness - b.fitness);
+        let elit = this.Population[0];
         // if GA end condition occured then return false to stop generation;
         if (elit.fitness === 0) {
             console.log("GA ended due to the best chromosome found :)");
@@ -146,8 +146,8 @@ class GA {
             console.log("GA ended due to the limitation of regeneration!!!");
             return false; // stop GA
         }
-        if (this.Popunation.filter(c => c.fitness == elit.fitness).length >=
-            Math.min(this.ConvergenceRate / 100, 0.9) * this.PopunationLenght) {
+        if (this.Population.filter(c => c.fitness == elit.fitness).length >=
+            Math.min(this.ConvergenceRate / 100, 0.9) * this.PopulationLenght) {
             // calculate histogram to seen chromosomes convergence            
             console.log("GA ended due to the convergence of chromosomes :(");
             return false;
@@ -159,12 +159,12 @@ class GA {
     regeneration() {
         this.RegenerationCounter++;
         if (this.RegenerationCounter % 100 === 0)
-            console.log("generation", this.RegenerationCounter, ", elite fitness is", this.Popunation[0].fitness);
+            console.log("generation", this.RegenerationCounter, ", elite fitness is", this.Population[0].fitness);
         let newPopulation = [];
 
         // create new chromosomes 
-        for (let index = this.Popunation.length; index < this.PopunationLenght; index++) {
-            let rand = new Random(0, this.Popunation.length - 1);
+        for (let index = this.Population.length; index < this.PopulationLenght; index++) {
+            let rand = new Random(0, this.Population.length - 1);
             let mom = this.getRandomeParent(rand);
             let dad = this.getRandomeParent(rand);
             let child = this.crossover(mom, dad);
@@ -173,12 +173,12 @@ class GA {
             newPopulation.push(child);
         }
 
-        this.Popunation.push.apply(this.Popunation, newPopulation); // append newPopulation to end of this.Popunation
+        this.Population.push.apply(this.Population, newPopulation); // append newPopulation to end of this.Popunation
     }
 
     getRandomeParent(rand) {
         let parentIndex = rand.next();
-        let parent = this.Popunation[parentIndex];
+        let parent = this.Population[parentIndex];
         if (parent == null) {
             throw new Error("GA.getRandomeParent has ERROR");
         }
@@ -192,7 +192,7 @@ class GA {
             this.Selection(this.SelectionPercent);
         }
 
-        return this.Popunation[0]; // Elitest chromosome
+        return this.Population[0]; // Elitest chromosome
     }
 }
 
